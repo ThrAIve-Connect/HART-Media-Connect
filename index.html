@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Social Media Flyer Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Generate Your Flyer</h1>
+    <form id="flyerForm" enctype="multipart/form-data">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+        
+        <label for="images">Upload images (up to 3):</label>
+        <input type="file" id="images" name="images" multiple accept="image/*">
+        
+        <button type="submit">Generate Flyer</button>
+    </form>
+
+    <div id="output">
+        <h2>Generated Flyer</h2>
+        <img id="flyerImage" src="" alt="Flyer Image">
+    </div>
+
+    <script>
+        document.getElementById('flyerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const response = await fetch('/generate-flyer', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                document.getElementById('flyerImage').src = url;
+            } else {
+                const data = await response.json();
+                alert("Error: " + data.error);
+            }
+        });
+    </script>
+</body>
+</html>
